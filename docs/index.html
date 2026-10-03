@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Auto Radar</title>
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>🚗 Auto Radar</h1>
+  <div id="status">загрузка…</div>
+</header>
+<div class="filters">
+  <input id="q" type="search" placeholder="Поиск: BMW, 2.0 TDI…">
+  <div class="chips" id="sources">
+    <button data-s="all" class="on">Все</button>
+    <button data-s="autoplius">Autoplius</button>
+    <button data-s="autogidas">Autogidas</button>
+    <button data-s="facebook">Facebook</button>
+  </div>
+  <label class="chk"><input type="checkbox" id="onlyNew"> только новые с последнего визита</label>
+</div>
+<main id="list"></main>
+<script src="app.js"></script>
+</body>
+</html>

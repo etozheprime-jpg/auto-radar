@@ -1,0 +1,15 @@
+{
+  "max_pages": 2,
+  "keep_listings": 1500,
+  "sources": {
+    "autoplius": [
+      {"name": "Все авто (новые сверху)", "url": "https://autoplius.lt/skelbimai/naudoti-automobiliai?order_by=3&order_direction=DESC"}
+    ],
+    "autogidas": [
+      {"name": "Все авто (новые сверху)", "url": "https://autogidas.lt/skelbimai/automobiliai/?order_by=2"}
+    ]
+  },
+  "facebook_searches": [
+    {"name": "Marketplace: авто Вильнюс", "url": "https://www.facebook.com/marketplace/vilnius/vehicles?sortBy=creation_time_descend"}
+  ]
+}

@@ -14,8 +14,8 @@ cd docs && python3 -m http.server 8000   # посмотреть PWA
 1. Создать репозиторий, `git remote add origin ...`, `git push -u origin main`.
 2. Settings → Pages → Source: *Deploy from a branch*, ветка `main`, папка `/docs`.
 3. Открыть сайт на телефоне → «Добавить на экран» — это и есть PWA.
-4. `.github/workflows/scrape.yml` запускает скрапер каждые 20 минут.
-   Если сайты блокируют IP GitHub (скорее всего), запускайте `./run_local.sh --push` с Mac по cron/launchd.
+4. `.github/workflows/scrape.yml` можно запустить вручную (Actions → Run workflow).
+   Сайты блокируют IP GitHub (проверено), поэтому по расписанию запускайте `./run_local.sh --push` с Mac по cron/launchd.
 
 ## Настройка поисков
 `scraper/config.json` — впишите свои URL фильтров (марка, цена, год) с сайтов.

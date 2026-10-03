@@ -4,9 +4,12 @@
 Запуск:  python scraper/scrape.py [--headed]
 """
 import json
+import os
 import re
 import sys
 import time
+import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode, urlparse, parse_qsl, urlunparse
@@ -112,7 +115,33 @@ def scrape_source(ctx, source, js, selector):
     return found
 
 
+def load_env():
+    f = ROOT / ".env"
+    if f.exists():
+        for line in f.read_text().splitlines():
+            if "=" in line and not line.strip().startswith("#"):
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip(), v.strip())
+
+
+def notify_telegram(items):
+    token, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
+    if not (token and chat and items):
+        return
+    def send(text):
+        data = urllib.parse.urlencode({"chat_id": chat, "text": text, "disable_web_page_preview": "false"}).encode()
+        try:
+            urllib.request.urlopen(f"https://api.telegram.org/bot{token}/sendMessage", data, timeout=20)
+        except Exception as e:
+            print("telegram: ошибка", e)
+    for i in items[:10]:
+        send(f"🚗 {i['title']} — {i['price']}\n{' · '.join(i['params'][:5])}\n[{i['source']}] {i['url']}")
+    if len(items) > 10:
+        send(f"…и ещё {len(items) - 10} новых объявлений в приложении")
+
+
 def main():
+    load_env()
     headed = "--headed" in sys.argv
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
 
@@ -132,12 +161,13 @@ def main():
         fresh += scrape_source(ctx, "autogidas", JS_AUTOGIDAS, ".article-item")
         browser.close()
 
-    new_count = 0
+    new_count, new_items, first_run = 0, [], not old
     for item in fresh:
         if item["id"] in old:
             first = old[item["id"]]["first_seen"]
         else:
             first, new_count = now, new_count + 1
+            new_items.append(item)
         item["first_seen"] = first
         old[item["id"]] = item
 
@@ -148,6 +178,8 @@ def main():
         "listings": listings,
     }
     OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+    if not first_run:  # при первом запуске не спамим всей базой
+        notify_telegram(new_items)
     print(f"Готово: собрано {len(fresh)}, новых {new_count}, всего в базе {len(listings)}")
     if not fresh:
         sys.exit(1)
